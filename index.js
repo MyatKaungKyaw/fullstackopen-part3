@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+app.use(express.json())
 
 const persons = [
     {
@@ -26,6 +27,18 @@ const persons = [
 
 app.get('/api/persons',(req,res) => {
     res.json(persons)
+})
+
+app.get('/api/persons/:id',(req,res)=>{
+    const id = Number(req.params.id)
+    const person = persons.find(p => p.id === id)
+    
+    if (!person){
+        res.send(`Person with id '${id}' is not in the server`)
+        return
+    }
+
+    res.json(person)
 })
 
 app.get('/info',(req,res) => {
