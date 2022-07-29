@@ -1,25 +1,51 @@
+### get all person
 GET http://localhost:3001/api/persons
 
-###
+### get info
 GET http://localhost:3001/info
 
-###
+### find person with id=1
 GET http://localhost:3001/api/persons/1
 
-###
+### find person with false id
 GET http://localhost:3001/api/persons/5
 
-###
+### delete person with id=1
 GET http://localhost:3001/api/persons/delete/1
 
-###
+### delete person with false id
 GET http://localhost:3001/api/persons/delete/5
 
-###
+### add person
 POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
     "name":"Mg Mg",
+    "number":"09-08-115599"
+}
+
+### add person without name
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "number":"09-08-115599"
+}
+
+### add person without number
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name":"Mg Mg"
+}
+
+### add person with name already exists
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name":"Arto Hellas",
     "number":"09-08-115599"
 }

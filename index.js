@@ -37,6 +37,16 @@ app.post('/api/persons',(req,res) => {
         number: req.body.number,
     }
 
+    if(!person.name){
+        return res.status(400).json({error: `The name is missing`}) 
+    }
+    if(!person.number){
+        return res.status(400).json({error: `The number is missing`}) 
+    }
+    else if(persons.find(p => p.name === person.name)){
+        return res.status(400).json({ error: 'name must be unique' }) 
+    }
+
     persons=persons.concat(person)
 
     res.json(persons)
