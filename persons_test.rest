@@ -14,3 +14,12 @@ GET http://localhost:3001/api/persons/delete/1
 
 ###
 GET http://localhost:3001/api/persons/delete/5
+
+###
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name":"Mg Mg",
+    "number":"09-08-115599"
+}
