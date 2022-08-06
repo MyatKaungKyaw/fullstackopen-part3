@@ -1,6 +1,9 @@
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
+const cors = require('cors')
+
+app.use(cors())
 app.use(express.json())
 
 // morgan(':method :url :status :res[content-length] - :response-time ms')
@@ -65,7 +68,7 @@ app.post('/api/persons', (req, res) => {
 
     persons = persons.concat(person)
 
-    res.json(persons)
+    res.json(person)
 })
 
 app.get('/api/persons/:id', (req, res) => {
@@ -79,7 +82,7 @@ app.get('/api/persons/:id', (req, res) => {
     res.json(person)
 })
 
-app.get('/api/persons/delete/:id', (req, res) => {
+app.delete('/api/persons/:id', (req, res) => {
     const id = Number(req.params.id)
     const prevPersons = persons
     persons = persons.filter(p => p.id !== id)
