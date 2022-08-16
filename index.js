@@ -4,6 +4,7 @@ const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
 const Person = require('./models/person')
+const { response } = require('express')
 
 app.use(cors())
 app.use(express.json())
@@ -48,18 +49,17 @@ let persons = [
 ]
 
 app.get('/api/persons', (req, res) => {
-    const people = Person.find({}).then(data => {
+    const people = Person.find({}).then((data) => {
         res.json(data)
     })
 })
 
 
 app.post('/api/persons', (req, res) => {
-    const person = {
-        id: parseInt(Math.random() * 100000),
+    const person = new Person({
         name: req.body.name,
         number: req.body.number,
-    }
+    })
 
     if (!person.name) {
         return res.status(400).json({ error: `The name is missing` })
@@ -67,13 +67,10 @@ app.post('/api/persons', (req, res) => {
     if (!person.number) {
         return res.status(400).json({ error: `The number is missing` })
     }
-    else if (persons.find(p => p.name === person.name)) {
-        return res.status(400).json({ error: 'name must be unique' })
-    }
 
-    persons = persons.concat(person)
-
-    res.json(person)
+    person.save().then(() =>{
+        res.json(person)
+    })
 })
 
 app.get('/api/persons/:id', (req, res) => {
