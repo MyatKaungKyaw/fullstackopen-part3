@@ -72,15 +72,24 @@ app.post('/api/persons', (req, res) => {
     })
 })
 
-app.get('/api/persons/:id', (req, res) => {
-    // const id = Number(req.params.id)
-    // const person = persons.find(p => p.id === id)
+app.put('/api/persons/:id', (req, res, next) => {
+    const body = req.body
 
-    // if (!person) {
-    //     return res.status(400).send(`Person with id '${id}' is not in the server.`)
-    // }
+    const person = {
+        name: body.name,
+        number: body.number
+    }
 
-    // res.json(person)
+    Person.findByIdAndUpdate(req.params.id, person, { new: true }).then(updPerson => {
+        res.json(updPerson)
+    })
+        .catch(next)
+})
+
+app.get('/api/persons/:id', (req, res, next) => {
+    Person.findById(req.params.id).then(foundPerson => {
+        res.json(foundPerson)
+    }).then(next)
 })
 
 app.delete('/api/persons/:id', (req, res, next) => {
@@ -97,6 +106,16 @@ app.get('/info', (req, res) => {
         <p>${new Date()}</p>
     `)
 })
+
+const idErrorHandler = (err,req,res,next)=>{
+    console.log(err.message);
+    
+    if(err.name==='CastError'){
+        return res.stats(400).send({error: 'malformatted id'})
+    }
+
+    next(err)
+}
 
 const catchAllErrHandler = (err, req, res, next) => {
     res.status(500)
