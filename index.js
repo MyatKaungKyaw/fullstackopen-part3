@@ -24,7 +24,6 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :r
     skip: (req, res) => req.method !== 'POST'
 }))
 
-
 let persons = [
     {
         "id": 1,
@@ -68,32 +67,28 @@ app.post('/api/persons', (req, res) => {
         return res.status(400).json({ error: `The number is missing` })
     }
 
-    person.save().then(() =>{
-        res.json(person)
+    person.save().then((savedPerson) =>{
+        res.json(savedPerson)
     })
 })
 
 app.get('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id)
-    const person = persons.find(p => p.id === id)
+    // const id = Number(req.params.id)
+    // const person = persons.find(p => p.id === id)
 
-    if (!person) {
-        return res.status(400).send(`Person with id '${id}' is not in the server.`)
-    }
+    // if (!person) {
+    //     return res.status(400).send(`Person with id '${id}' is not in the server.`)
+    // }
 
-    res.json(person)
+    // res.json(person)
 })
 
-app.delete('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id)
-    const prevPersons = persons
-    persons = persons.filter(p => p.id !== id)
-
-    if (prevPersons.length === persons.length) {
-        return res.send(`Person with id '${id}' is not in the server`)
-    }
-
-    return res.status(204).end()
+app.delete('/api/persons/:id', (req, res,next) => {
+    console.log('%cindex.js line:87 req.params.id', 'color: #007acc;', req.params.id);
+    Person.findByIdAndRemove(req.params.id).then(result => {
+        res.status(204).end()
+    })
+    .catch(next)
 })
 
 app.get('/info', (req, res) => {
