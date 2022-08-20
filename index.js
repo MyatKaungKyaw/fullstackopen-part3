@@ -67,7 +67,7 @@ app.post('/api/persons', (req, res) => {
         return res.status(400).json({ error: `The number is missing` })
     }
 
-    person.save().then((savedPerson) =>{
+    person.save().then((savedPerson) => {
         res.json(savedPerson)
     })
 })
@@ -83,12 +83,12 @@ app.get('/api/persons/:id', (req, res) => {
     // res.json(person)
 })
 
-app.delete('/api/persons/:id', (req, res,next) => {
+app.delete('/api/persons/:id', (req, res, next) => {
     console.log('%cindex.js line:87 req.params.id', 'color: #007acc;', req.params.id);
     Person.findByIdAndRemove(req.params.id).then(result => {
         res.status(204).end()
     })
-    .catch(next)
+        .catch(next)
 })
 
 app.get('/info', (req, res) => {
@@ -97,6 +97,13 @@ app.get('/info', (req, res) => {
         <p>${new Date()}</p>
     `)
 })
+
+const catchAllErrHandler = (err, req, res, next) => {
+    res.status(500)
+    res.render('error', { error: err })
+}
+
+app.use(catchAllErrHandler)
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
