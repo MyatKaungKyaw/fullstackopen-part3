@@ -54,7 +54,7 @@ app.get('/api/persons', (req, res) => {
 })
 
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res,next) => {
     const person = new Person({
         name: req.body.name,
         number: req.body.number,
@@ -69,7 +69,7 @@ app.post('/api/persons', (req, res) => {
 
     person.save().then((savedPerson) => {
         res.json(savedPerson)
-    })
+    }).catch(next)
 })
 
 app.put('/api/persons/:id', (req, res, next) => {
@@ -80,10 +80,9 @@ app.put('/api/persons/:id', (req, res, next) => {
         number: body.number
     }
 
-    Person.findByIdAndUpdate(req.params.id, person, { new: true }).then(updPerson => {
+    Person.findByIdAndUpdate(req.params.id, person, {runValidators:true, new: true }).then(updPerson => {
         res.json(updPerson)
-    })
-        .catch(next)
+    }).catch(next)
 })
 
 app.get('/api/persons/:id', (req, res, next) => {
@@ -96,8 +95,7 @@ app.delete('/api/persons/:id', (req, res, next) => {
     console.log('%cindex.js line:87 req.params.id', 'color: #007acc;', req.params.id);
     Person.findByIdAndRemove(req.params.id).then(result => {
         res.status(204).end()
-    })
-        .catch(next)
+    }).catch(next)
 })
 
 app.get('/info', (req, res) => {
@@ -107,15 +105,19 @@ app.get('/info', (req, res) => {
     `)
 })
 
-const idErrorHandler = (err,req,res,next)=>{
+const ErrorHandler = (err, req, res, next) => {
     console.log(err.message);
-    
-    if(err.name==='CastError'){
-        return res.stats(400).send({error: 'malformatted id'})
-    }
 
+    if (err.name === 'CastError') {
+        return res.stats(400).send({ error: 'malformatted id' })
+    } else if (err.name === 'ValidationError') {
+        console.log('%cindex.js line:114 ', 'color: #007acc;');
+        return res.status(400).json({ error: err.message })
+    }
     next(err)
 }
+
+app.use(ErrorHandler)
 
 const catchAllErrHandler = (err, req, res, next) => {
     res.status(500)
